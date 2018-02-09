@@ -13,7 +13,8 @@ Resources:
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
-          -   Effect: Allow
+          -
+              Effect: Allow
               Action: sts:AssumeRoleWithSAML
               Principal:
                 Federated:
@@ -21,6 +22,7 @@ Resources:
               Condition:
                 StringEquals:
                   SAML:aud: https://signin.aws.amazon.com/saml
+                  SAML:iss: urn:auth.mozilla.auth0.com
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/ReadOnlyAccess
       RoleName: AWSAccountRead
@@ -34,7 +36,8 @@ Resources:
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
-          -   Effect: Allow
+          -
+              Effect: Allow
               Action: sts:AssumeRoleWithSAML
               Principal:
                 Federated:
@@ -42,6 +45,7 @@ Resources:
               Condition:
                 StringEquals:
                   SAML:aud: https://signin.aws.amazon.com/saml
+                  SAML:iss: urn:auth.mozilla.auth0.com
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AdministratorAccess
       RoleName: AWSAccountAdmin
