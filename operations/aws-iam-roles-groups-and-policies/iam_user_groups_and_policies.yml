@@ -1,0 +1,112 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation template to create the IAM user policies and groups
+  in the Production AWS account.
+Metadata:
+  Source: https://github.com/mozilla-iam/infra-bootstrapping/tree/master/operations/aws-iam-roles-groups-and-policies
+Resources:
+  RoleAssumptionPolicy:
+    Metadata:
+      Notes1: This policy grants users rights to assume the read and admin roles
+      Notes2: in the local account.
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Policy which grants users rights to assume the administrative roles
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:iam::'
+                  - !Ref 'AWS::AccountId'
+                  - :role/AWSAccountRead
+              - !Join
+                - ''
+                - - 'arn:aws:iam::'
+                  - !Ref 'AWS::AccountId'
+                  - :role/AWSAccountAdmin
+  SelfManageMFAPolicy:
+    Metadata:
+      Notes1: This policy enables users to manage their own MFA tokens.
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Policy which enables a user to manage their own MFA token
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowUsersToCreateEnableResyncDeleteTheirOwnVirtualMFADevice
+            Effect: Allow
+            Action:
+              - iam:CreateVirtualMFADevice
+              - iam:EnableMFADevice
+              - iam:ResyncMFADevice
+              - iam:DeleteVirtualMFADevice
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:iam::'
+                  - !Ref 'AWS::AccountId'
+                  - :mfa/${aws:username}
+              - !Join
+                - ''
+                - - 'arn:aws:iam::'
+                  - !Ref 'AWS::AccountId'
+                  - :user/${aws:username}
+              - !Join
+                - ''
+                - - 'arn:aws:iam::'
+                  - !Ref 'AWS::AccountId'
+                  - :mfa/*/${aws:username}
+              - !Join
+                - ''
+                - - 'arn:aws:iam::'
+                  - !Ref 'AWS::AccountId'
+                  - :user/*/${aws:username}
+          - Sid: AllowUsersToDeactivateTheirOwnVirtualMFADevice
+            Effect: Allow
+            Action:
+              - iam:DeactivateMFADevice
+            Resource:
+              - !Join
+                - ''
+                - - 'arn:aws:iam::'
+                  - !Ref 'AWS::AccountId'
+                  - :mfa/${aws:username}
+              - !Join
+                - ''
+                - - 'arn:aws:iam::'
+                  - !Ref 'AWS::AccountId'
+                  - :user/${aws:username}
+              - !Join
+                - ''
+                - - 'arn:aws:iam::'
+                  - !Ref 'AWS::AccountId'
+                  - :mfa/*/${aws:username}
+              - !Join
+                - ''
+                - - 'arn:aws:iam::'
+                  - !Ref 'AWS::AccountId'
+                  - :user/*/${aws:username}
+            Condition:
+              Bool:
+                aws:MultiFactorAuthPresent: true
+          - Sid: AllowUsersToListMFADevicesandUsersForConsole
+            Effect: Allow
+            Action:
+              - iam:ListMFADevices
+              - iam:ListVirtualMFADevices
+              - iam:ListUsers
+            Resource: '*'
+  OperationsUserGroup:
+    Metadata:
+      Notes1: This group can be mapped to operations users to grant them rights to assume
+        the administrative roles
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: IAMUser
+      ManagedPolicyArns:
+        - !Ref 'RoleAssumptionPolicy'
+        - !Ref 'SelfManageMFAPolicy'
+        - arn:aws:iam::aws:policy/IAMUserChangePassword
