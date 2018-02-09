@@ -3,10 +3,6 @@ Description: AWS CloudFormation template to create the IAM team IAM Roles in the
   Production AWS accounts.
 Metadata:
   Source: https://github.com/mozilla-iam/infra-bootstrapping/tree/master/operations/aws-iam-roles-groups-and-policies
-Mappings:
-  VariablesMap:
-    AWSAccount:
-      ProdAccountId: '320464205386'
 Resources:
   AWSFederatedAccountReadRole:
     Type: AWS::IAM::Role
@@ -20,13 +16,8 @@ Resources:
           -   Effect: Allow
               Action: sts:AssumeRoleWithSAML
               Principal:
-                Federated: !Join
-                  - 'arn:aws:iam::'
-                    - !FindInMap
-                      - VariablesMap
-                      - AWSAccount
-                      - ProdAccountId
-                  - ':saml-provider/auth0-prod'
+                Federated:
+                  Fn::Sub: arn:aws:iam::${AWS::AccountId}:saml-provider/auth0-prod
               Condition:
                 StringEquals:
                   SAML:aud: https://signin.aws.amazon.com/saml
@@ -46,13 +37,8 @@ Resources:
           -   Effect: Allow
               Action: sts:AssumeRoleWithSAML
               Principal:
-                Federated: !Join
-                  - 'arn:aws:iam::'
-                    - !FindInMap
-                      - VariablesMap
-                      - AWSAccount
-                      - ProdAccountId
-                  - ':saml-provider/auth0-prod'
+                Federated:
+                  Fn::Sub: arn:aws:iam::${AWS::AccountId}:saml-provider/auth0-prod
               Condition:
                 StringEquals:
                   SAML:aud: https://signin.aws.amazon.com/saml
