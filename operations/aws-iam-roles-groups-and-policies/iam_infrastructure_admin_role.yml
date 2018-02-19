@@ -15,7 +15,7 @@ Resources:
           - Sid: AllowAll
             Effect: Allow
             Action:
-              - *
+              - '*'
             Resource: '*'
   InfrastructureAdminRole:
     Type: AWS::IAM::Role
