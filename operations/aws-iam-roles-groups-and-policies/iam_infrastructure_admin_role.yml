@@ -3,20 +3,6 @@ Description: AWS CloudFormation template to create an IAM role to manage other i
 Metadata:
   Source: https://github.com/mozilla-iam/infra-bootstrapping/tree/master/operations/aws-iam-roles-groups-and-policies
 Resources:
-  InfrastructureAdminPolicy:
-    Metadata:
-      Notes1: This policy enables the role to manage the account.
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      Description: This policy enables the role to manage the account.
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Sid: AllowAll
-            Effect: Allow
-            Action:
-              - '*'
-            Resource: '*'
   InfrastructureAdminRole:
     Type: AWS::IAM::Role
     Metadata:
@@ -31,5 +17,5 @@ Resources:
               Principal:
                 Service: "codebuild.amazonaws.com"
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/InfrastructureAdminPolicy
+        - arn:aws:iam::aws:policy/AdministratorAccess
       RoleName: InfrastructureAdminRole
