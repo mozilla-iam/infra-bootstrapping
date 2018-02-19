@@ -12,3 +12,4 @@
       - { stackName: 'FederatedAccessRoles', template: 'operations/aws-iam-roles-groups-and-policies/iam_read_and_admin_roles_federated.yml' }
       - { stackName: 'UnfederatedAccessRoles', template: 'operations/aws-iam-roles-groups-and-policies/iam_read_and_admin_roles.yml' }
       - { stackName: 'UnfederatedGroupsandPolicies', template: 'operations/aws-iam-roles-groups-and-policies/iam_user_groups_and_policies.yml' }
+      - { stackName: 'InfrastructureAdminRole', template: 'operations/aws-iam-roles-groups-and-policies/iam_infrastructure_admin_role.yml' }
