@@ -1,0 +1,12 @@
+version: 0.2
+env:
+  variables:
+    AWS_DEFAULT_REGION: "us-west-2"
+
+phases:
+  install:
+    commands:
+      - pip install ansible botocore boto3
+  build:
+    commands:
+      - ansible-playbook ansible.yml
